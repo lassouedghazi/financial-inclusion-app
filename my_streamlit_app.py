@@ -6,7 +6,7 @@ import pickle
 import streamlit as st
 
 # Load and preprocess data
-df = pd.read_csv("Financial_inclusion_dataset.csv")
+df = pd.read_csv("/content/Financial_inclusion_dataset.csv")
 df.dropna(inplace=True)
 
 # Ensure the uniqueid column is dropped
@@ -42,29 +42,55 @@ with open('label_encoders.pkl', 'wb') as file:
 # Streamlit app
 st.set_page_config(page_title="Financial Inclusion Prediction App", layout="wide")
 
-st.title('Financial Inclusion Prediction App')
+# Custom CSS for styling
 st.markdown(
     """
-    This application predicts whether an individual is likely to have a bank account based on various demographic features. Enter individual details below to get a prediction.
+    <style>
+    body {
+        background-color: #f0f8ff; /* Light background color */
+    }
+    .title {
+        color: #007BFF; /* Title color */
+    }
+    .sidebar {
+        background-color: #ffffff; /* Sidebar color */
+        color: #333; /* Sidebar text color */
+    }
+    .result {
+        color: #28A745; /* Result text color */
+        font-weight: bold;
+    }
+    </style>
+    """, unsafe_allow_html=True
+)
+
+st.title('🌍 Financial Inclusion Prediction App')
+st.markdown(
+    """
+    This application predicts whether an individual is likely to have a bank account based on various demographic features. 
+    Please enter the individual details below to get a prediction. 🏦
     """
 )
 
-st.sidebar.header('Input Individual Data')
+st.sidebar.header('🛠️ Input Individual Data')
 
-# Sidebar inputs
-country = st.sidebar.selectbox('Country', df['country'].unique())
-year = st.sidebar.selectbox('Year', df['year'].unique())
-location_type = st.sidebar.selectbox('Location Type', df['location_type'].unique())
-cellphone_access = st.sidebar.selectbox('Cellphone Access', df['cellphone_access'].unique())
-gender_of_respondent = st.sidebar.selectbox('Gender of Respondent', df['gender_of_respondent'].unique())
-relationship_with_head = st.sidebar.selectbox('Relationship with Head', df['relationship_with_head'].unique())
-marital_status = st.sidebar.selectbox('Marital Status', df['marital_status'].unique())
-education_level = st.sidebar.selectbox('Education Level', df['education_level'].unique())
-job_type = st.sidebar.selectbox('Job Type', df['job_type'].unique())
-age_of_respondent = st.sidebar.slider('Age of Respondent', int(df['age_of_respondent'].min()), int(df['age_of_respondent'].max()), int(df['age_of_respondent'].mean()))
-household_size = st.sidebar.slider('Household Size', int(df['household_size'].min()), int(df['household_size'].max()), int(df['household_size'].mean()))
+# Sidebar inputs with better organization
+st.sidebar.markdown("### Demographic Information", unsafe_allow_html=True)
+country = st.sidebar.selectbox('Country 🌎', df['country'].unique())
+year = st.sidebar.selectbox('Year 📅', df['year'].unique())
+location_type = st.sidebar.selectbox('Location Type 📍', df['location_type'].unique())
+cellphone_access = st.sidebar.selectbox('Cellphone Access 📱', df['cellphone_access'].unique())
+gender_of_respondent = st.sidebar.selectbox('Gender of Respondent 🚻', df['gender_of_respondent'].unique())
+relationship_with_head = st.sidebar.selectbox('Relationship with Head 👨‍👩‍👧‍👦', df['relationship_with_head'].unique())
+marital_status = st.sidebar.selectbox('Marital Status 💍', df['marital_status'].unique())
+education_level = st.sidebar.selectbox('Education Level 🎓', df['education_level'].unique())
+job_type = st.sidebar.selectbox('Job Type 💼', df['job_type'].unique())
 
-if st.sidebar.button('Predict Financial Inclusion'):
+st.sidebar.markdown("### Age and Household Information", unsafe_allow_html=True)
+age_of_respondent = st.sidebar.slider('Age of Respondent 👶👴', int(df['age_of_respondent'].min()), int(df['age_of_respondent'].max()), int(df['age_of_respondent'].mean()))
+household_size = st.sidebar.slider('Household Size 🏠', int(df['household_size'].min()), int(df['household_size'].max()), int(df['household_size'].mean()))
+
+if st.sidebar.button('🔍 Predict Financial Inclusion'):
     # Create the input_data DataFrame with the same columns and order as the training data
     input_data = pd.DataFrame([{
         'country': country,
@@ -92,4 +118,7 @@ if st.sidebar.button('Predict Financial Inclusion'):
         model = pickle.load(file)
     prediction = model.predict(input_data)
     
-    st.write(f'### Prediction: {"Has a bank account" if prediction[0] == 1 else "Does not have a bank account"}')
+    # Display the prediction result
+    st.subheader('📊 Prediction Result:')
+    result_text = "Has a bank account" if prediction[0] == 1 else "Does not have a bank account"
+    st.markdown(f'<p class="result">{result_text} 🏦</p>', unsafe_allow_html=True)
