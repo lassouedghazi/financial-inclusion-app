@@ -6,7 +6,7 @@ import pickle
 import streamlit as st
 
 # Load and preprocess data
-df = pd.read_csv("/content/Financial_inclusion_dataset.csv")
+df = pd.read_csv("Financial_inclusion_dataset.csv")
 df.dropna(inplace=True)
 
 # Ensure the uniqueid column is dropped
